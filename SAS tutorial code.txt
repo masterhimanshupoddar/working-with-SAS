@@ -647,5 +647,5 @@ Run;
 
 /*Running the macro*/
 %macrovarname
-Quit; /* closing the macro ,not writing it will also do*/
+Quit; /* closing the macro ,not writing the quit statement will also do*/
 
