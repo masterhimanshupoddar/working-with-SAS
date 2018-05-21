@@ -1,0 +1,651 @@
+After opening the SAS studio
+#The directory structure is UNIX based and the Oracle virtual box helps you deal with iit
+#you cant reference library with the normal C::/ heirarchy
+It has to be something like
+/folders/myfolders/Himanshu
+
+CODE
+For creating a library you can use Libname Himanshu /folders/myfolders/Himanshu ->where Himanshu is library name which will  be created in your My libraries heirarchy
+
+#for extracting the data set from other library into your own library you can do
+Data Himanshu.One;
+Set sashelp.cars;;
+Run;
+
+or for bringing into your WORK area you can do
+Data One;
+Set sashelp.cars;
+Run;
+without actually specifying the library name on first line
+
+SAS NAME RULES
+The name of the data set or variables
+Name of the library should be only till 8 character
+the name should only start with character or underscore and it should  not contain special characters and should not start with a number
+
+In SAS
+columns means variables
+rows means observations 
+
+#inserting a comment in SAS
+Single line comments - /*Body*/
+Multi line comments *comment;
+
+#A sample code
+Proc SQL OutObs = 30; /* data set with 30 observations*/
+Create Table Himanshu.NewData As /*creating table in Himanshu library*/
+Select Make,Type,Origin /* 3 variables*/
+From SASHELP.CARS; /*From cars data of sashelp library
+Quit;
+
+#Title and Footnote
+Title - heading of the report to be generated
+Footnote - Footnote of the SAS report
+
+/*Only 10 title and footnote are allowed
+Title 'This is a demo report';
+Title2 'This is my second Title';
+Footnote 'My first report';
+Footnote2 'My second footnote';
+Proc SQL InObs = 10;
+Select Make,Model,Type,Cylinders
+From SASHELP.Cars
+Where Cylinders In (4,6); /*cylinder category in 4 and 5*/
+Quit;
+
+similarly we can add attributes to our title and footnote
+Title Bold FONT='Cambria' Height=6 Color=Blue Justify=Center Italic 'This is a demo report';
+
+Footnote 'My first report';
+Footnote2 'My second footnote';
+Proc SQL InObs = 10;
+Select Make,Model,Type,Cylinders
+From SASHELP.Cars
+Where Cylinders In (4,6); /*cylinder category in 4 and 5*/
+Quit;
+#for more attributes google it
+
+#ARITHMETIC OPERATORS IN SAS
+DATA Himanshu.data8;
+Set Sashelp.Cars (keep = Make Model Type Cylinders Horsepower);
+SumVar = Cylinders + Horsepower;
+SubtVar = Horsepower - Cylinders;
+MultVar = Horsepower * Cylinders;
+DivVar = Horsepower / Cylinders;
+Run;
+
+Proc Print Data = Himanshu.data8(Obs = 10);
+Run;
+
+#LOGICAL OPERATORS IN SAS
+DATA Himanshu.data8;
+Set Sashelp.Cars (keep = Make Model Type Cylinders Horsepower);
+IF Cylinders= 6 /* similarly not equal to is wriiten as ~= or NE or ^=*/
+Then
+NewVar = 'Medium Power';
+ELSE
+NewVar = 'Low Power';
+Run;
+/* greater than less than can also be used or greater than equal to or less than equal to can be used >= or GE*/
+Proc Print Data = Himanshu.data8(Obs = 10);
+Run;
+
+#SUBSET FUNCTION IN SAS
+subset can be used for two purpose one for extracting string and the other for inserting string into it
+Data Test;
+length ID $ 3. Code $ 15. Designation $ 15.;
+Input Id $ Code $ Designation $;
+Cards;
+A01 772-Ajay Manager
+A02 773-Wakar Executive
+A03 774-Gurmeet Executive
+A04 775-Tanmay Sr.Manager
+A05 776-JAiKishan General_Manager
+;
+Run;
+
+Data Test1;
+Set Test;
+Extract = Substr(Code,1,3);
+Substr(Code,1,3) = '000'; /*remember one thing how many places you are removing only that many places will be added even if you try to add large string*/
+Run;
+
+Proc Print Data = Test1;
+Run;
+
+#CATX in SAS
+Data Test;
+length ID $ 3. Code $ 15. Designation $ 15.;
+Input Id $ Code $ Designation $;
+Cards;
+A01 Ajay Manager
+A02 Wakar Executive
+A03 Gurmeet Executive
+A04 Tanmay Sr.Manager
+A05 JaiKishan General_Manager
+;
+Run;
+
+Data Test1;
+Set Test;
+Joined = Catx('-',Id,Name) /*separator,first variable,second variable*/
+Run;
+
+Proc Print Data = Test1;
+Run;
+
+#Upcase, Propcase & Lowcase in SAS
+#UPPER CASE
+Data Test;
+length ID $ 3. Name $ 15. Designation $ 15.;
+Input Id $ Name $ Designation $ Salary $;
+Cards;
+A01 Ajay Manager 300000
+A02 Wakar Executive 15000
+A03 Gurmeet Executive 18000
+A04 Tanmay Sr.Manager 350000
+A05 JaiKishan General_Manager 32000
+;
+Run;
+
+Data Test1;
+Set Test;
+Upper = Upcase(Name); /*convert to upper case*/
+Run;
+
+#Converting to proper case i.e first letter should be in caps
+Data Test;
+length ID $ 3. Name $ 15. Designation $ 15.;
+Input Id $ Name $ Designation $ Salary $;
+Cards;
+A01 AJAY Manager 300000
+A02 WAKAR Executive 15000
+A03 GURMEET Executive 18000
+A04 TANMAY Sr.Manager 350000
+A05 JAIKISHAN General_Manager 32000
+;
+Run;
+
+Data Test1;
+Set Test;
+proper = Propcase(Name,'_'); /*convert name and string after _ that can be surname to proper case*/
+Run;
+
+Proc Print Data = Test1;
+Run;
+
+#Converting data to lower case
+Data Test;
+length ID $ 3. Name $ 15. Designation $ 15.;
+Input Id $ Name $ Designation $ Salary $;
+Cards;
+A01 AJAY Manager 300000
+A02 WAKAR Executive 15000
+A03 GURMEET Executive 18000
+A04 TANMAY Sr.Manager 350000
+A05 JAIKISHAN General_Manager 32000
+;
+Run;
+
+Data Test1;
+Set Test;
+proper = Propcase(Name); /*convert to upper case*/
+Run;
+
+Proc Print Data = Test1;
+Run;
+
+#Converting to lower case
+Data Test;
+length ID $ 3. Name $ 15. Designation $ 15.;
+Input Id $ Name $ Designation $ Salary $;
+Cards;
+A01 AJAY Manager 300000
+A02 WAKAR Executive 15000
+A03 GURMEET Executive 18000
+A04 TANMAY Sr.Manager 350000
+A05 JAIKISHAN General_Manager 32000
+;
+Run;
+
+Data Test1;
+Set Test;
+lower = lowcase(Name); /*convert to upper case*/
+Run;
+
+Proc Print Data = Test1;
+Run;
+
+#Scan function
+gives a specified required value from a variable
+#basically it is analogous to split function
+Data New;
+Set SASHELP.BASEBALL;
+NewVar = Scan(Name,1,',') /*variable,first value,delimiter*/
+*For multiple delimeter you can write the delimeters side by side eg ', ' comma and space
+Run;
+/*firstly the data will be separated with , and then space*/
+Proc Print Data = New (Obs=10);
+Run;
+
+#SAS INDEX FUNCTION
+#searching a substring in the string and then return the starting index
+Data Himanshu.New;
+Set SASHELP.Cars (Keep=Make Model Type Cylinders Horsepower);
+NewVar = Index(Model,'4dr');
+Run;
+
+#Find function in SAS
+#can handle case sensitive which was not in Index()
+#start searching after given n number of characters
+Data Himanshu.New;
+Set SASHELP.Cars (Keep=Make Model Type Cylinders Horsepower);
+NewVar = Find(Model,'4dr','i',10);  /*(SEARCH WHERE,WHAT,4dr or 4DR both case will match,number of char after which u want to search)*/
+Run;
+
+Proc Print Data = Himanshu.New;
+Run;
+
+#TRANWRD IN SAS
+this function is used to replace a string with another stringData Himanshu.New;
+Set SASHELP.Cars (Keep=Make Model Type Cylinders Horsepower);
+NewVar = Tranwrd(Model,'4dr','Driver'); /*(which variable,which substring you want to change,new substring)*/
+Run;
+
+Proc Print Data = Himanshu.New;
+Run;
+
+#TRANSLATE FUNCTION IN SAS
+#For same length character
+Data Himanshu.New;
+Set SASHELP.Cars (Keep=Make Model Type Cylinders Horsepower);
+NewVar = Translate(Model,'d','m'); /*(which variable,new character,which character you want to change)*/
+/*same length string can be replaced by same length string*/
+Run;
+
+Proc Print Data = Himanshu.New(Obs=10);
+Run;
+
+#COMPBL in SAS
+Compress the spaces more than two to one
+Data Himanshu.New;
+	Infile Datalines;
+	Input SlNo  Name $  Mobile $ 50.;
+	Datalines;
+1 Satish +91   9304386106
+2 Sarvesh +91 9835555804
+3 Rakesh +91 8603804624
+Run;
+
+Proc Print Data=Himanshu.New;
+Run;
+
+Data New1;
+Set Himanshu.New;
+NewVar = compbl(Mobile) /*compresses extra spaces*/
+NewVar = SubStr(NewVar,5,10);
+
+Run;
+
+Proc Print Data=New1;
+Run;
+
+
+#COMPRESS FUNCTION IN SAS
+Used for data cleaning cleaning the string
+Proc Print Data=Himanshu.New;
+Run;
+OR
+
+Data Himanshu.New;
+	Infile Datalines; /*this means that data is present in this file only*/
+	Input SlNo  Name $  Mobile $ 50.;
+	Datalines;
+1 Satish +91 %%$$9211--??&&% 5566..**weeodddd &&
+2 Sarvesh +91 --$$98355%%55&&804 ##
+3 Rakesh +91 %%8@@6//038**04624weeeoo
+Run;
+
+Proc Print Data=Himanshu.New;
+Run;
+
+Data New1;
+Set Himanshu.New;
+NewVar = Compress(Mobile,'','asp'); /*d-digits p- special characterss-space a-alphabet */
+Run;
+
+Proc Print Data=New1;
+Run;
+
+#IMPORTING DATA FROM EXCEL
+For SAS first we need to upload the data to our SAS library and then using import data option we can select the file to be imported and then a code will be generated to import the data we can run and see the data
+/*Import excel data*/
+/*using sas inbuilt feature*/
+Proc import out=Himanshu.Hightemp
+Datafile = '/folders/myfolders/hightemp.csv';
+DBMS=Excel Replace;
+Run;
+
+#KEEP,DROP in SAS
+Data New(keep = height weight age);
+Set Sashelp.Class; /*which set you want to take from*/
+drop height weight
+Run;
+
+#IF ELSE in SAS
+Data New;
+Set sashelp.Cars;
+Length Power $20;/*set the length of power as 20 otherwise first value length will be alloted*/
+If Cylinders <= 7 Then Power = 'Low Power';
+Else If Cylinders >=7 and Cylinders <=10 Then Power = 'Medium Power';
+Else If Cylinders >= 11 then power =  'high Power';
+Run;
+
+Proc Print data = New;
+Run;
+
+#EXTRACTING DATASET OUT OF A EXISTING DATASET BASED ON Certain Conditions
+/*extracting dataset out of existing dataset*/
+Data LowPower HighPower ;/*creating two data set*/
+Set Sashelp.CARS (keep = Make Model Type Cylinders Horsepower);
+If Horsepower > 225 Then Output Highpower; /*then store the dataset in high p;ower*/
+If Horsepower <= 225 AND Horsepower >=0 Then Output LowPower; /*store the dataset in lowpower*/
+Run;
+
+
+Proc print Data = LowPower(Obs = 10);
+Run;
+
+Proc print Data = HighPower(Obs = 10);
+Run;
+
+
+
+#DEALING WITH MISSING OBSERVATION IN SAS PROGRAM
+the missing value for a character set is denoted as space in SAS program
+while for character is denoted as  .
+/*dealimg with missing data*/
+data new;
+set Sashelp.cars (keep = Make Model Type Cylinders Horsepower);
+If Cylinders = 4 Then Cylinders=.;
+Run;
+
+Data new2;/*new data set new2*/
+Set new; /*take from new*/
+If Cylinders = . Then cylinders = 0; /*take only those data set from new where cylinders is not equal to empty*/
+Run;
+
+
+
+
+Proc SQl;
+Select Make,Sum(Cylinders) As Tot1,Sum(Horsepower) As Tot2
+From New2
+Group By Make;
+Quit;
+
+Proc Print Data = New2(Obs = 15);
+Run;
+
+and for character entry
+/*dealimg with missing data*/
+data new;
+set Sashelp.cars (keep = Make Model Type Cylinders Horsepower);
+If type = 'Sedan' Then type='';
+Run;
+
+Proc Print Data = new(Obs = 15);
+Run;
+
+Data new2;
+set new;
+if type = '' Then type = 'noval';
+Run;
+
+Proc sql;
+Select Distinct Type
+From new2;
+Quit;
+
+#Knowing about the dataset
+#p;rocedure contents is used for the purpose
+For knowing about all the datset
+/*In SAS library is the directory that contains the dataset*/
+Proc Contents Data = sashelp._ALL_;
+Run;
+
+For knowing about a single datasetProc Contents Data = sashelp.baseball;
+Run;
+#OUTPUT
+
+Alphabetic List of Variables and Attributes
+#	Variable	Type	Len	Label
+10	CrAtBat	Num	8	Career Times at Bat
+15	CrBB	Num	8	Career Walks
+11	CrHits	Num	8	Career Hits
+12	CrHome	Num	8	Career Home Runs
+14	CrRbi	Num	8	Career RBIs
+13	CrRuns	Num	8	Career Runs
+23	Div	Char	16	League and Division
+17	Division	Char	8	Division at the End of 1986
+16	League	Char	8	League at the End of 1986
+1	Name	Char	18	Player's Name
+18	Position	Char	8	Position(s) in 1986
+22	Salary	Num	8	1987 Salary in $ Thousands
+2	Team	Char	14	Team at the End of 1986
+9	YrMajor	Num	8	Years in the Major Leagues
+24	logSalary	Num	8	Log Salary
+20	nAssts	Num	8	Assists in 1986
+3	nAtBat	Num	8	Times at Bat in 1986
+8	nBB	Num	8	Walks in 1986
+21	nError	Num	8	Errors in 1986
+4	nHits	Num	8	Hits in 1986
+5	nHome	Num	8	Home Runs in 1986
+19	nOuts	Num	8	Put Outs in 1986
+7	nRBI	Num	8	RBIs in 1986
+6	nRuns	Num	8	Runs in 1986
+
+#USing proc datasets can also helkp us attain the goal
+
+Proc datasets;
+Contents Data = sashelp.cars;
+Quit
+
+#Printing the dataset
+Data new;
+set sashelp.cars(keep = make model type cylinders horsepower);
+Newvar = Cylinders * Horsepower;
+Run;
+
+#/*PRINTING the datset in HTML format*/
+Proc Print Data = new Noobs; /*for not printing the index 1.2....*/
+Var Make NewVar; /*if we want to print only certain variables*/
+Run;
+
+#Connect SQL Database With SAS
+
+--refer google---
+
+#PROCEDURE SQL
+Displaying with SQL commands
+Proc Print Data = Test;
+Run;
+
+#Outobs with SQL commands
+#limiting the number of observation in our screen
+Proc SQL OutObs = 25;
+Select * from sashelp.cars;
+Quit;
+
+#Procedure SQL select statement with SAS
+#creating a table from select statement
+/*Proc SQL select statement*/
+Proc Sql OutObs = 25;
+Create Table Himanshu.newdata as
+/*want to select make model origin from cars*/
+Select make,model,origin,type
+from sashelp.cars
+Quit;
+
+#Proc SQL renaming a column name
+/*Changing the name of the variables in SQL proc*/
+Proc Sql OutObs = 25;
+Create Table Newdata As
+Select make as company,model as car_model,type as car_type,origin as car_origin
+from sashelp.cars;
+Quit;
+
+#Selecting unique or distinct features
+/*Changing the name of the variables in SQL proc*/
+Proc Sql OutObs = 25;
+Create Table Newdata As
+Select make as company,model as car_model,type as car_type,origin as car_origin
+from sashelp.cars;
+Quit;
+
+#Unique or distinct data of combinations
+/*Distinct or unique observation*/
+Proc SQL outobs = 25;
+Create table Himanshu.newdata as 
+select distinct make,type
+from sashelp.cars;
+quit;
+
+#CALCULATION IN SQL PROC
+/*CALCULATIONS IN PROCEDURE SQL*/
+Proc SQL outobs = 25;
+Create table Himanshu.newdata as 
+select make,type,origin, (enginesize +/*- cylinders) as calc
+from sashelp.cars;
+quit;
+
+#DROP statement in PROC SQL
+used for deleting
+/*DROP PROCEDURE SQL*/
+Proc SQL outobs = 25;
+Create table Himanshu.newdata as 
+select *
+from sashelp.cars;
+quit;
+
+#PROCEDURE SQL WHERE CLAUSE
+/*WHERE PROCEDURE SQL*/
+Proc SQL outobs = 25;
+Create table Himanshu.newdata as 
+select *
+from sashelp.cars
+where cylinders gt 6;
+/* all data which has cylinder >6 will be stored in himanshu.newdata*/
+quit;
+
+/*AND,OR,IN PROCEDURE SQL*/
+Proc SQL outobs = 25;
+Create table Himanshu.newdata as 
+select *
+from sashelp.cars
+where cylinders >= 6 AND/OR cylinders <=8;
+quit;
+
+/*AND,OR,IN PROCEDURE SQL*/
+Proc SQL outobs = 25;
+Create table Himanshu.newdata as 
+select *
+from sashelp.cars
+where cylinders IN (8,4); /*for checking more than one value or data from a set*/
+quit;
+
+/*LIKE,NOT in PROCEDURE SQL*/
+*like used for characters where as IN is used for numerics; 
+Proc SQL outobs = 25;
+Create table Himanshu.newdata as 
+select *
+from sashelp.cars
+where cylinders NOT IN (8,4); /* except 8 and 4 all will be selected*/
+quit;
+
+Proc SQL ;
+SELECT * from sashelp.cars
+where make like 'Audi'; /*not can also be used with like*/
+Quit;
+
+/*WILDCARD CHARACTERS WITH LIKE in PROCEDURE SQL*/
+Proc SQL outobs = 25;
+Create table Himanshu.newdata as 
+select *
+from sashelp.cars
+where make like '_ud_'; /*  _ means any character*/
+/* where model like '%x%'; if I have x in between but dont know about neighbours*/
+/*if u know last character is LX you can do '%LX' or if you know*/
+quit;
+
+/*Contains in SQL proc*/
+where model Contains('Quattro') /*if string is contained then show the observation*/
+
+#VIEWS IN SQL PROC
+/*views from the proc sql data*/
+PROC sql;
+Create View himanshu.newview as
+Select make,type,origin from sashelp.cars;
+Quit;
+
+#CASE STATEMENTS IN SQL PROC IN SAS/*case statements in proc sql*/
+/*case statements in proc sql*/
+PROC sql;
+Create table himanshu.newtable as
+Select make,model,cylinders, /*between(v1,v2) and IN(v1,v2,v3) can also be used*/
+case when cylinders > 3 and cylinders < 6 then 'low power'
+when cylinders = 6 or cylinders = 10 then 'medium power'
+Else 'Dont Know'
+end as carpower
+from sashelp.cars;
+Quit;
+
+#OPTIONS IN PROC SWL IN SAS
+/*OPTIONS AVAILABLE IN PROC SQL*/
+/*Inobs limiting the number of data that we want to extract/take*/
+/*Only 20 records were read from SASHELP.CARS due to INOBS= option.*/
+/*WARNING: Statement terminated early due to OUTOBS=20 option.*/
+/* number means automatic indexing will be done*/
+/*Noprint means output will not be displayed*/
+/* prompt ask us whether you want to display more output depends on outobs*/
+/*stimer displays which line of code take how much time*/
+PROC sql outObs=5 NoNumber Print Prompt STimer; 
+Create table himanshu.newtable as
+Select make,model,type 
+from sashelp.cars;
+Quit;
+
+
+#SUBSET DATA IN SQL PROC
+IN SAS
+/*taking out sub set from the original data*/
+Data Test;
+Set sashelp.cars;
+If cylinders > 4;
+Run;
+
+IN PROC SQL
+proc SQL;
+create table test2
+Select * from sashelp.cars
+where cylinders>4;
+quit;
+
+#MACROS IN SAS
+/* MACROS IN SQL PROC*/
+%Macro macrovarname;
+Data Himanshu.NewData;
+Set sashelp.cars (keep = Make Model Type Cylinders Horsepower);
+If cylinders <= 6 Then NewVar = 'Less power';
+Else if Cylinders > 6 then newvar = 'medium Power';
+Run;
+
+Proc Print data = Himanshu.Newdata(Obs = 15);
+Run;
+%Mend macrovarname;
+
+
+/*Running the macro*/
+%macrovarname
+Quit; /* closing the macro ,not writing it will also do*/
+
